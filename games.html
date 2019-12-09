@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid goldenrod;
+    background-color: grey;
+}
+
+div.static {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 300px;
+	border: 3px solid goldenrod;
+}
+body {
+	background-color: black;
+}
+
+h1 {
+	background-color: silver;
+	text-transform: capitalize;
+	font-family: "Lucida Console", Lucida, Monospace;
+}
+
+p {
+	background-color: silver;
+	text-transform: capitalize;
+	text-indent: 50px;
+	font-family: "Lucida Console", Lucida, Monospace;
+	}
+
+div {
+	background-color: silver;
+	text-transform: capitalize;
+	font-family: "Lucida Console", Lucida, Monospace;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: silver;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: goldenrod;}
+ </style>
+</head>
+<body>
+<ul>
+  <li><a href="test.html">Home</a></li>
+  <li><a href="games.html">Games</a></li>
+  <li><a href="login.html">Log In</a></li>
+  <li><a href="createagame.html">Create A Game</a></li>
+</ul>
+
+<body onload="startGame()">
+<script>
+var myGamePiece;
+var myObstacles = [];
+var myScore;
+var mySound;
+var myMusic;
+
+function startGame() {
+    myGamePiece = new component(30, 30, "purple", 10, 120);
+    myScore = new component("30px", "Consolas", "goldenrod", 280, 40, "text");
+    mySound = new sound("bounce.mp3");
+    myMusic = new sound("496132_greek555_loop-mix.mp3");
+  myMusic.play();
+    myGameArea.start();
+}
+
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function(){
+    this.sound.play();
+  }
+  this.stop = function(){
+    this.sound.pause();
+  }
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 550;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        window.addEventListener('keydown', function (e) {
+      myGameArea.keys = (myGameArea.keys || []);
+      myGameArea.keys[e.keyCode] = true;
+    })
+    window.addEventListener('keyup', function (e) {
+      myGameArea.keys[e.keyCode] = false;
+    })
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
+    }
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+         if (this.type == "text") {
+      ctx.font = this.width + " " + this.height;
+      ctx.fillStyle = color;
+      ctx.fillText(this.text, this.x, this.y);
+    } else {
+      ctx.fillStyle = color;
+      ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+    }
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;        
+    }    
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+            mySound = new sound("bounce.mp3");
+            myGameArea.stop();
+            return;
+        } 
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+     myGamePiece.speedX = 0;
+  myGamePiece.speedY = 0;
+  if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.speedX = -1; }
+  if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.speedX = 1; }
+  if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speedY = -1; }
+  if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speedY = 1; }
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        minHeight = 20;
+        maxHeight = 200;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+        minGap = 40;
+        maxGap = 200;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+        myObstacles.push(new component(10, height, "black", x, 0));
+        myObstacles.push(new component(10, x - height - gap, "black", x, height + gap));
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].x += -1;
+        myObstacles[i].update();
+    }
+    myScore.text = "SCORE: " + myGameArea.frameNo;
+  myScore.update();
+    myGamePiece.newPos();    
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+</script>
+
+<p>Click game to start! try to get as far as possible (This game is a template for other games you can design)
+</body>
+</html>
+

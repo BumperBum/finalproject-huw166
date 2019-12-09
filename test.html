@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewpoint" content="width=device-width, initial-scale=1.0">
+<head>
+<style>
+div.static {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 300px;
+	border: 3px solid goldenrod;
+}
+body {
+	background-color: black;
+}
+
+h1 {
+	background-color: silver;
+	text-transform: capitalize;
+	font-family: "Lucida Console", Lucida, Monospace;
+}
+
+p {
+	background-color: silver;
+	text-transform: capitalize;
+	text-indent: 50px;
+	font-family: "Lucida Console", Lucida, Monospace;
+	}
+
+div {
+	background-color: silver;
+	text-transform: capitalize;
+	font-family: "Lucida Console", Lucida, Monospace;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: silver;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: goldenrod;}
+
+<title>Wally.Rus</title>
+
+</style>
+</head>
+<body>
+
+<ul>
+  <li><a href="test.html">Home</a></li>
+  <li><a href="games.html">Games</a></li>
+  <li><a href="login.html">Log In</a></li>
+  <li><a href="createagame.html">Create A Game</a></li>
+</ul>
+
+<h1>This is a test site</h1>
+<p>Wally.Rus is a Free Gaming Website! Play Games, Create games and Increase your Knowledge of Gaming and Designing!</p>
+
+<p id="demo">Statement of the Day!</p>
+
+<button type="button" onclick='document.getElementById("demo").innerHTML = "Food is Good!"'>Check Out Statement :)</button>
+
+
+<img src="Images/Wally.jpg" alt="Wally" width="500px" height="300px">
+
+</body>
+</html>
